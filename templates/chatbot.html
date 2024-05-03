@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <!-- Add any necessary styling or scripts for the chatbot interface -->
+    <style>
+        /* Add your custom CSS styles here */
+
+
+        h1{
+            text-align: center;
+            color: white;
+            /* border: 1px solid black; */
+            /* border-color: black; */
+            /* background-color: #164d6c; */
+            /* background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); */
+            background-image: linear-gradient(to right, #53b3dcc4 0%, #2777a6 100%);
+            /* background-image: radial-gradient(circle 248px at center, #16d9e3 0%, #30c7ec 47%, #46aef7 100%); */
+        }
+    
+        #chat-container {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .user-message {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            text-align: right;
+        }
+        .bot-message {
+            background-color: #d9edf7;
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        #input-container {
+            margin-top: 10px;
+        }
+
+        #user-input{
+            padding: 5px 15px;
+        }
+
+        button{
+            background-color: #2777a6;
+            color: white;
+            font-weight: bold;
+            padding: 7px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Floody</h1>
+    <div id="chat-container">
+        <!-- Chat messages will be displayed here -->
+    </div>
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <!-- Add any necessary scripts -->
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("user-input").value;
+            if (userInput.trim() !== "") {
+                appendMessage(userInput, 'user');
+                document.getElementById("user-input").value = "";
+                // Send the user message to the backend
+                fetch('/chatbot_interaction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_input: userInput
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    appendMessage(data, 'bot');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        function appendMessage(message, sender) {
+            var chatContainer = document.getElementById("chat-container");
+            var messageDiv = document.createElement("div");
+            messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
+            messageDiv.textContent = message;
+            chatContainer.appendChild(messageDiv);
+            // Scroll to the bottom of the chat container
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>

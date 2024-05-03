@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="128x128" href="static/favicon2.png">
+    <title>Rescue Team - FloodGuard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #154460;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            /* margin-bottom: 30px; */
+            padding: 2%;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #53b3dcc4;
+            text-align: left;
+        }
+
+        th {
+            background-color: #53b3dcc4;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            background-color: #164d6c;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #19455e;
+        }
+
+        .help-needed-red {
+            background-color: #fbb0b0;
+            /* Red background color */
+        }
+
+        .help-needed-red:hover {
+            background-color: #fda4a4;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>FloodGuard - Rescue Team</h1>
+
+    <div style="display: flex; gap: 3%; padding-bottom: 3%;">
+        <!-- Location Distribution Map -->
+        <div>
+            <img src="data:image/png;base64,{{ chart_location }}" style="width: 450px; height: 350px;">
+        </div>
+
+        <!-- Bar Chart of Help Needed Categories -->
+        <div>
+            <img src="data:image/png;base64,{{ chart_help_needed }}" style="width: 450px; height: 350px;">
+        </div>
+
+        <!-- Time Series Chart of Form Submissions -->
+        <div>
+            <img src="data:image/png;base64,{{ chart_time_series }}" style="width: 450px; height: 350px;">
+        </div>
+    </div>
+
+    <!-- Form entries table -->
+    <table>
+        <tr>
+            <th>Form Text</th>
+            <th>Location</th>
+            <th>Number of People</th>
+            <th>Help Needed</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th></th>
+        </tr>
+        {% for entry in form_entries %}
+        <tr {% if 'baby' in entry[4] or 'child' in entry[4] or 'pregnant' in entry[4] or 'babies' in entry[4]
+            or 'children' in entry[4] or 'elders' in entry[4] or 'disabled' in entry[4] %} class="help-needed-red" {%
+            endif %}>
+            <td>{{ entry[1] }}</td>
+            <td>{{ entry[2] }}</td>
+            <td>{{ entry[5] }}</td>
+            <td>{{ entry[4] }}</td>
+            <td>
+                <form action="/admin" method="POST">
+                    <input type="hidden" name="form_id" value="{{ entry[0] }}">
+                    <select name="new_status">
+                        <option value="pending" {% if entry[3]=='pending' %} selected {% endif %}>Pending</option>
+                        <option value="Processing" {% if entry[3]=='Processing' %} selected {% endif %}>Processing
+                        </option>
+                        <option value="Completed" {% if entry[3]=='Completed' %} selected {% endif %}>Completed</option>
+                    </select>
+            </td>
+            <td>
+                <button type="submit">Update Status</button>
+                </form>
+            </td>
+            <td>
+                <form action="/delete-form" method="POST">
+                    <input type="hidden" name="form_id" value="{{ entry[0] }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="128x128" href="static/favicon2.png">
+    <title>FloodGuard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            max-height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+            /* Hide scrollbars on Chrome/Safari/Opera */
+        }
+
+        h1 {
+            margin-bottom: 0;
+            text-align: center;
+            color: #154460;
+        }
+
+        .main {
+            display: flex;
+            gap: 5%;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2% 0;
+            height: 90vh;
+        }
+
+        .image-container {
+            width: 60%;
+            /* Adjust as needed */
+            /* height: 100%; */
+            background-image: url('your-image-url.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container {
+            width: 30%;
+            /* Adjust as needed */
+            padding: 30px;
+            background-color: #53b3dc58;
+            border-radius: 8px;
+            box-shadow: 0 0 20px #235f8196;
+            margin-right: 2%;
+        }
+
+        .container h2 {
+            margin-bottom: 20px;
+            color: #164d6c;
+            text-align: center;
+        }
+
+        form {
+            text-align: left;
+            width: 100%;
+        }
+
+        .field {
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 98%;
+            padding: 6px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 8px;
+            background-color: #164d6c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+
+        }
+
+        input[type='radio'] {
+            appearance: none;
+
+            border-radius: 50%;
+            /* width: 16px;
+            height: 16px; */
+
+            border: 6px solid rgba(38, 103, 141, 0.295);
+            transition: 0.2s all linear;
+            /* margin-right: 5px; */
+
+            position: relative;
+            /* top: 4px; */
+        }
+
+        input[type='radio']:checked {
+            border: 6px solid #164d6c;
+        }
+
+        .toggle-form {
+            font-size: 16px;
+            /* margin-top: 20px; */
+            text-align: center;
+        }
+
+        a {
+            color: #164d6c;
+            font-weight: bold;
+        }
+
+        hr {
+            width: 30%;
+            display: inline-block;
+            margin: 10px 0;
+            height: 1px;
+            background-color: #000;
+            border: none;
+            vertical-align: middle;
+        }
+
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #ffdddd;
+            color: #ff0000;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome To FloodGuard</h1>
+    <p style="text-align: center; color: #164d6c; margin-bottom: 0; margin-top: 10px;">- we save LIVES during flood TIMES</p>
+    <div class="main">
+        <div class="image-container">
+            <!-- Your image here -->
+            <img src="static/flood-bg.png" alt="Image" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="container">
+            <!-- Login Form -->
+            <form id="login-form" action="/" method="POST">
+                <h2 id="login-heading">User Login</h2>
+                <input type="radio" id="user" name="user_type" value="user" checked
+                    onchange="changeLoginHeading('User')">
+                <label for="user">User</label>
+                <input type="radio" id="organization" name="user_type" value="organization"
+                    onchange="changeLoginHeading('Organization')">
+                <label for="organization">Organization</label><br><br>
+                {% if error_message %}
+                <p class="alert">{{ error_message }}</p>
+                {% endif %}
+                <label for="username" class="field">Username:</label>
+                <input type="text" id="username" name="username" required><br>
+                <label for="password" class="field">Password:</label>
+                <input type="password" id="password" name="password" required><br><br>
+                <input type="submit" name="submit_button" value="SignIn"><br><br>
+                <p>
+                    <hr style="margin-left: 17%;"> or
+                    <hr>
+                </p>
+                <p class="toggle-form">Don't have an account? <a href="#" onclick="toggleForm('create')">SignUp /
+                        Register</a></p>
+            </form>
+
+            <!-- Create Account Form (Initially Hidden) -->
+            <form id="create-form" action="/" method="POST" style="display: none;">
+                <h2 id="create-heading">Create User Account</h2>
+                <input type="radio" id="user" name="user_type" value="user" checked
+                    onchange="changeCreateHeading('User')">
+                <label for="user">User</label>
+                <input type="radio" id="organization" name="user_type" value="organization"
+                    onchange="changeCreateHeading('Organization')">
+                <label for="organization">Organization</label><br><br>
+                {% if error_message %}
+                <p class="alert">{{ error_message }}</p>
+                {% endif %}
+                <label for="username" class="field">Username:</label>
+                <input type="text" id="username" name="username" required><br>
+                <label for="password" class="field">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <div class="verf-field" style="display: none;">
+                    <label for="verfcode" class="field">Verification code: <p style="font-size: 12px; display: inline;">
+                            (Contact us to know)</p></label>
+                    <input type="text" id="verfcode" name="verfcode" required>
+                </div><br><br>
+                <input type="submit" name="submit_button" value="SignUp / Register"><br><br>
+                <p>
+                    <hr style="margin-left: 17%;"> or
+                    <hr>
+                </p>
+                <p class="toggle-form">Already have an account? <a href="#" onclick="toggleForm('login')">SignIn</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleForm(formType) {
+            if (formType === 'create') {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('create-form').style.display = 'inline-block';
+            } else if (formType === 'login') {
+                document.getElementById('create-form').style.display = 'none';
+                document.getElementById('login-form').style.display = 'inline-block';
+            }
+        }
+
+        function changeLoginHeading(type) {
+            if (type === 'Organization') {
+                document.getElementById('login-heading').innerText = 'Organization Login';
+            } else {
+                document.getElementById('login-heading').innerText = 'User Login';
+            }
+        }
+
+        function changeCreateHeading(type) {
+            if (type === 'Organization') {
+                document.getElementById('create-heading').innerText = 'Create Organization Account';
+                document.getElementsByClassName('verf-field')[0].style.display = 'block';
+            } else {
+                document.getElementById('create-heading').innerText = 'Create User Account';
+                document.getElementsByClassName('verf-field')[0].style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>
